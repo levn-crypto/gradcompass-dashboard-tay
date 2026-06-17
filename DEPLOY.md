@@ -26,9 +26,17 @@ Output Directory: .
 Install Command: leave empty
 ```
 
-## Upstash Redis
+## Vercel KV / Upstash Redis
 
-Create or connect an Upstash Redis database from the Vercel Marketplace, then make sure these environment variables exist in the Vercel project:
+Create or connect Vercel KV / Upstash Redis from the Vercel Marketplace. Vercel usually injects these variables automatically:
+
+```text
+KV_REST_API_URL
+KV_REST_API_TOKEN
+KV_REST_API_READ_ONLY_TOKEN
+```
+
+The code also supports the equivalent Upstash variable names:
 
 ```text
 UPSTASH_REDIS_REST_URL
