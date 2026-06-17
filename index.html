@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GradCompass</title>
+  <style>
+    :root {
+      --bg: #f8f9fa;
+      --card: #ffffff;
+      --soft: #f0f2f5;
+      --line: #e6e9ef;
+      --text: #1a1a1a;
+      --muted: #555555;
+      --light: #7b8492;
+      --primary: #007bff;
+      --amber: #ffbf00;
+      --green: #19a463;
+      --red: #e5484d;
+      --orange: #f97316;
+      --purple: #7b6db2;
+      --shadow: 0 2px 8px rgba(0,0,0,.05);
+      --radius: 8px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      font-size: 14px;
+    }
+    button, input, select { font: inherit; }
+    button { color: inherit; cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 214px 1fr; }
+    .sidebar {
+      position: sticky; top: 0; height: 100vh; background: var(--card);
+      border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 24px; }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--amber), #ffe69a); color: #4a3600; font-weight: 900;
+    }
+    .brand strong { display: block; font-size: 15px; }
+    .brand span { color: var(--light); font-size: 11px; }
+    .nav-label { padding: 0 10px 8px; color: var(--light); font-size: 10px; text-transform: uppercase; }
+    .nav { display: grid; gap: 4px; }
+    .nav button {
+      border: 0; background: transparent; color: #6b7280; border-radius: 8px; padding: 10px;
+      display: flex; align-items: center; gap: 10px; text-align: left;
+    }
+    .nav button:hover { background: var(--soft); color: var(--text); }
+    .nav button.active { background: #fff6cf; color: #654800; font-weight: 700; }
+    .nav-icon { width: 20px; height: 20px; display: grid; place-items: center; }
+    .profile {
+      margin-top: auto; border: 1px solid var(--line); border-radius: var(--radius);
+      background: #fbfcfd; padding: 12px; display: flex; gap: 10px; align-items: center;
+      cursor: pointer;
+    }
+    .profile:hover { border-color: #cbd5e1; box-shadow: var(--shadow); }
+    .avatar { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: #eaf3ff; color: var(--primary); font-weight: 800; }
+    .profile small { display: block; margin-top: 2px; color: var(--light); }
+
+    main { min-width: 0; padding: 0 28px 38px; }
+    .topbar {
+      min-height: 70px; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--line); margin-bottom: 24px; position: sticky; top: 0; z-index: 10;
+      background: rgba(248,249,250,.9); backdrop-filter: blur(12px);
+    }
+    .crumb { color: var(--light); font-size: 12px; }
+    .crumb strong { color: var(--text); }
+    .controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-items: center; }
+    .control, .btn {
+      height: 36px; border: 1px solid var(--line); border-radius: 8px; background: var(--card);
+      padding: 0 11px; box-shadow: 0 1px 2px rgba(0,0,0,.03); outline: none; font-size: 12px;
+    }
+    .btn.primary { background: var(--primary); color: white; border-color: var(--primary); }
+    .btn.active { background: #fff6cf; border-color: #ead37b; color: #654800; font-weight: 700; }
+    .save-state { color: var(--light); font-size: 11px; min-width: 72px; }
+
+    .section { display: none; }
+    .section.active { display: block; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 16px; }
+    h1 { margin: 0 0 7px; font-size: 26px; letter-spacing: 0; }
+    .page-head p { margin: 0; color: var(--muted); }
+    .date-chip { border: 1px solid var(--line); background: var(--card); border-radius: 8px; padding: 8px 11px; box-shadow: var(--shadow); color: var(--muted); white-space: nowrap; }
+    .grid { display: grid; gap: 14px; }
+    .two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .five { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .dashboard-widgets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+    .card {
+      background: var(--card); border: 1px solid rgba(226,232,240,.9); border-radius: var(--radius);
+      padding: 17px; box-shadow: var(--shadow); min-width: 0;
+    }
+    .widget { grid-column: span 2; transition: box-shadow .16s, transform .16s; display: flex; flex-direction: column; height: 100%; }
+    .widget.size-small { grid-column: span 1; }
+    .widget.size-medium { grid-column: span 2; }
+    .widget.size-large { grid-column: 1 / -1; }
+    .widget.size-medium:not(.collapsed) { min-height: 390px; }
+    .widget.size-small:not(.collapsed) { min-height: 390px; }
+    .widget.size-large:not(.collapsed) { min-height: 230px; }
+    .widget .card-content { flex: 1; min-height: 0; }
+    .widget.size-medium .card-content, .widget.size-small .card-content { overflow: auto; }
+    .widget.dragging { opacity: .55; transform: scale(.995); }
+    .widget.collapsed .card-content { display: none; }
+    .widget.collapsed .card-head { margin-bottom: 0; }
+    .wide { grid-column: span 2; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .card-actions, .widget-tools { display: flex; align-items: center; gap: 8px; }
+    .widget-tools { opacity: .45; }
+    .widget:hover .widget-tools, body.editing .widget-tools { opacity: 1; }
+    .icon-btn {
+      width: 28px; height: 28px; border: 1px solid var(--line); border-radius: 6px; background: #fff;
+      display: grid; place-items: center; color: var(--light); padding: 0; font-size: 13px;
+    }
+    .icon-btn:hover { color: var(--primary); border-color: #b7d7ff; background: #f5f9ff; }
+    .widget-grip { cursor: grab; }
+    .eyebrow { color: var(--light); font-size: 10px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 5px; }
+    .card-title { font-size: 14px; font-weight: 800; }
+    .hint { color: var(--light); font-size: 11px; }
+    .link-btn { border: 0; background: none; color: var(--primary); padding: 0; font-size: 12px; }
+    body.readonly .link-btn, body.readonly .widget-tools, body.readonly .delete-dot, body.readonly .row-actions, body.readonly #edit, body.readonly #save, body.readonly #saveProfile, body.readonly #studentView, body.readonly .risk-add, body.readonly [data-add], body.readonly .tag-x { display: none !important; }
+    body.readonly .editable { outline: none !important; }
+    body.readonly input, body.readonly textarea, body.readonly select { pointer-events: none; background: #f8fafc; color: var(--muted); }
+    .editable { border-radius: 4px; }
+    body.editing .editable { outline: 1px dashed #c6d1df; outline-offset: 3px; }
+    body.editing .editable:hover { background: #f5f9ff; }
+    body.editing .editable[contenteditable=true]:focus { outline: 2px solid var(--primary); background: #eaf3ff; }
+
+    .ring-wrap { display: grid; grid-template-columns: 138px 1fr; gap: 18px; align-items: center; }
+    .ring {
+      --p: 41; width: 124px; aspect-ratio: 1; border-radius: 50%;
+      background: conic-gradient(var(--primary) calc(var(--p) * 1%), #e7edf5 0);
+      display: grid; place-items: center; position: relative;
+    }
+    .ring::after { content: ""; position: absolute; width: 92px; height: 92px; border-radius: 50%; background: white; }
+    .ring b { position: relative; z-index: 1; font-size: 31px; }
+    .ring small { position: relative; z-index: 1; display: block; color: var(--light); font-size: 10px; text-align: center; }
+    .progress-list { display: grid; gap: 9px; }
+    .progress-row { display: grid; grid-template-columns: 58px 1fr 34px; gap: 9px; align-items: center; font-size: 11px; color: var(--muted); }
+    .track { height: 7px; border-radius: 999px; background: #e8edf4; overflow: hidden; }
+    .fill { height: 100%; border-radius: inherit; background: var(--primary); }
+
+    .metric { border: 1px solid var(--line); border-radius: 8px; padding: 13px; background: #fff; cursor: pointer; }
+    .metric, .english, .mini-card { position: relative; }
+    .metric span { color: var(--light); font-size: 11px; }
+    .metric strong { display: block; margin: 7px 0 4px; font-size: 27px; }
+    .metric small { color: var(--green); }
+    .metric small.warn { color: var(--orange); }
+    .score-language { display: grid; grid-template-columns: minmax(240px, .75fr) minmax(0, 1.25fr); gap: 14px; align-items: start; }
+    .widget.size-small .score-language, .widget.size-small .two, .widget.size-small .english-grid, .widget.size-small .course-grid { grid-template-columns: 1fr; }
+    .widget.size-small .card-head { align-items: flex-start; }
+    .widget.size-small .card-actions { flex-wrap: wrap; justify-content: flex-end; }
+    .score-subhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 9px; }
+    .score-subtitle { color: var(--muted); font-weight: 800; font-size: 12px; }
+
+    .task-list, .item-list { display: grid; gap: 8px; }
+    .task {
+      display: grid; grid-template-columns: 22px 1fr auto auto; gap: 9px; align-items: center;
+      border: 1px solid var(--line); border-radius: 8px; padding: 10px 11px; background: #fff;
+    }
+    .task.dragging { opacity: .45; }
+    .task input { width: 18px; height: 18px; accent-color: var(--primary); }
+    .task.done .task-title { color: #98a1ae; text-decoration: line-through; }
+    .task-title { font-weight: 700; font-size: 13px; }
+    .task-meta { color: var(--light); font-size: 11px; margin-top: 3px; }
+    .drag { color: #b1bac7; cursor: grab; }
+    .tag { display: inline-flex; border-radius: 999px; padding: 4px 8px; font-size: 11px; border: 1px solid transparent; white-space: nowrap; }
+    .tag.high, .tag.reach, .tag.blocked { color: var(--red); background: #fff0f0; border-color: #ffd1d1; }
+    .tag.mid, .tag.match { color: #7a5700; background: #fff6cf; border-color: #ecd77e; }
+    .tag.normal, .tag.active { color: var(--primary); background: #eaf3ff; border-color: #cfe5ff; }
+    .tag.done, .tag.safe { color: var(--green); background: #eaf8ef; border-color: #c8ead4; }
+    .add-line { border: 1px dashed #c8d2df; background: #fbfcfd; color: var(--primary); border-radius: 8px; padding: 10px 12px; text-align: left; }
+
+    .course-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .course { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fff; }
+    .course-top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+    .course-name { font-weight: 800; font-size: 12px; }
+    .course-grade { color: var(--primary); font-weight: 800; font-size: 12px; }
+
+    .timeline { display: grid; gap: 10px; max-height: 305px; overflow: auto; padding-right: 4px; align-content: start; }
+    .time-item { display: grid; grid-template-columns: 74px 1fr auto; gap: 10px; align-items: start; border-bottom: 1px solid #eef1f5; padding-bottom: 10px; }
+    .time-item:last-child { border-bottom: 0; }
+    .time-month { color: var(--primary); font-weight: 800; font-size: 11px; }
+    .time-title { font-weight: 800; }
+    .time-desc { color: var(--light); font-size: 11px; margin-top: 3px; }
+
+
+    .english-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 9px; }
+    .english { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fff; text-align: center; }
+    .english b { display: block; font-size: 20px; margin: 5px 0 2px; }
+    .english span { color: var(--light); font-size: 10px; }
+
+    .skill-group { display: grid; gap: 8px; align-content: start; }
+    .skill-row { display: grid; grid-template-columns: 1fr 44px; gap: 8px; font-size: 11px; align-items: center; }
+    .skill-row span { color: var(--muted); }
+
+    .mini-card {
+      border: 1px solid var(--line); border-radius: 8px; background: #fff; padding: 11px;
+      display: grid; gap: 6px;
+    }
+    .mini-card strong { font-size: 13px; }
+    .mini-card p { margin: 0; color: var(--light); font-size: 11px; line-height: 1.45; }
+
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    table { width: 100%; border-collapse: collapse; min-width: 920px; }
+    th { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); color: var(--light); font-size: 11px; background: #fff; }
+    td { padding: 11px 12px; border-bottom: 1px solid #edf0f4; color: var(--muted); vertical-align: middle; }
+    tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: #fbfcff; }
+    .row-title { color: var(--text); font-weight: 800; }
+    .row-sub { display: block; color: var(--light); font-size: 11px; margin-top: 3px; }
+    .logo { width: 34px; height: 34px; border: 0; border-radius: 8px; display: grid; place-items: center; background: #fff6cf; color: #654800; font-weight: 900; }
+    .select { border: 1px solid var(--line); border-radius: 6px; background: #fff; padding: 6px; }
+    .row-actions { opacity: 0; display: flex; gap: 4px; }
+    tr:hover .row-actions { opacity: 1; }
+    .mini-btn { width: 28px; height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 6px; }
+    .cell-input { width: 100%; border: 1px solid #b7d7ff; border-radius: 6px; padding: 7px; }
+    .delete-dot {
+      position: absolute; right: 7px; top: 7px; width: 22px; height: 22px; border: 1px solid #ffd1d1;
+      border-radius: 50%; background: #fff0f0; color: var(--red); display: none; align-items: center; justify-content: center;
+      padding: 0; font-size: 13px;
+    }
+    body.editing .delete-dot { display: inline-flex; }
+
+    .drawer { position: fixed; right: 0; top: 0; bottom: 0; width: min(420px, 92vw); background: #fff; border-left: 1px solid var(--line); box-shadow: -16px 0 36px rgba(15,23,42,.14); z-index: 50; transform: translateX(105%); transition: .22s; padding: 22px; overflow: auto; }
+    .drawer.open { transform: translateX(0); }
+    .drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .modal { position: fixed; inset: 0; display: none; place-items: center; background: rgba(15,23,42,.25); z-index: 60; padding: 18px; }
+    .modal.open { display: grid; }
+    .modal-card { width: min(440px, 100%); background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 20px; box-shadow: 0 24px 80px rgba(15,23,42,.22); }
+    .modal-card h2 { margin: 0 0 14px; font-size: 18px; }
+    .field { display: grid; gap: 6px; margin-bottom: 12px; color: var(--light); font-size: 12px; }
+    .field input, .field textarea { border: 1px solid var(--line); border-radius: 8px; padding: 10px; outline: none; color: var(--text); width: 100%; }
+    .profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+    .profile-grid .profile-plan { grid-column: 1 / -1; }
+    .profile-plan .profile-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .profile-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .profile-fields .field { margin-bottom: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .risk-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .risk-tag { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 7px 10px; font-size: 12px; }
+    .risk-tag.active { border-color: #ffd1d1; background: #fff0f0; color: var(--red); font-weight: 700; }
+    .risk-tag .tag-x { margin-left: 7px; color: var(--red); font-weight: 900; }
+    .risk-add { display: flex; gap: 8px; margin-top: 10px; }
+    .risk-add input { flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; outline: none; }
+    .profile-subsection { border-top: 1px solid #edf0f4; padding-top: 12px; margin-top: 12px; }
+    .profile-subtitle { font-size: 12px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+    .pdf-toggle {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      border: 1px solid var(--line); border-radius: 8px; background: #fbfcfd; padding: 10px 12px;
+      color: var(--muted); font-size: 12px; margin-bottom: 12px;
+    }
+    .pdf-toggle input { width: 18px; height: 18px; accent-color: var(--primary); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+    .toast { position: fixed; right: 22px; bottom: 22px; background: #11243f; color: white; padding: 11px 14px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: .2s; z-index: 80; font-size: 12px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media print {
+      body { background: #fff; }
+      .sidebar, .topbar, .drawer, .modal, .toast, .delete-dot, .link-btn, .row-actions { display: none !important; }
+      .app { display: block; }
+      main { padding: 0; }
+      .section { display: none !important; }
+      .section.active { display: block !important; }
+      .card { break-inside: avoid; box-shadow: none; border-color: #d9dde5; }
+    }
+
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: 74px 1fr; }
+      .brand div:last-child, .nav span:not(.nav-icon), .nav-label, .profile div:last-child { display: none; }
+      .sidebar { padding: 18px 10px; }
+      .brand { justify-content: center; padding-inline: 0; }
+      .nav button { justify-content: center; }
+      .profile { justify-content: center; padding: 9px; }
+      .wide, .two, .three, .four, .five { grid-template-columns: 1fr; grid-column: auto; }
+    }
+    @media (max-width: 760px) {
+      .app { display: block; }
+      .sidebar { position: fixed; height: 62px; top: auto; bottom: 0; left: 0; right: 0; z-index: 40; border-right: 0; border-top: 1px solid var(--line); padding: 7px; }
+      .brand, .profile, .nav-label { display: none; }
+      .nav { grid-template-columns: repeat(5,1fr); }
+      .nav button { justify-content: center; padding: 6px; }
+      main { padding: 0 14px 84px; }
+      .topbar { position: static; flex-direction: column; align-items: flex-start; padding: 10px 0; }
+      .controls { justify-content: flex-start; }
+      .page-head { flex-direction: column; align-items: flex-start; }
+      .ring-wrap, .english-grid, .course-grid { grid-template-columns: 1fr; }
+      .dashboard-widgets, .score-language { grid-template-columns: 1fr; }
+      .widget, .widget.size-small, .widget.size-medium, .widget.size-large { grid-column: auto; }
+      .profile-grid, .profile-fields { grid-template-columns: 1fr; }
+      .task { grid-template-columns: 22px 1fr auto; }
+      .drag { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">G</div><div><strong>GradCompass</strong><span>申请看板</span></div></div>
+      <div class="nav-label">规划目录</div>
+      <nav class="nav">
+        <button class="active" data-section="dashboard"><span class="nav-icon">⌂</span><span>申请总览</span></button>
+        <button data-section="programs"><span class="nav-icon">◇</span><span>选校规划</span></button>
+        <button data-section="companies"><span class="nav-icon">↗</span><span>就业目标</span></button>
+        <button data-section="actions"><span class="nav-icon">✓</span><span>行动计划</span></button>
+        <button data-section="settings"><span class="nav-icon">⚙</span><span>学生档案</span></button>
+      </nav>
+      <div class="profile" id="profileCard"><div class="avatar" id="profileAvatar">TC</div><div><strong id="student-line">Taylor Cui</strong><small>大二 · CS · 2027 Fall</small></div></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div class="crumb">GradCompass / <strong id="crumb">申请总览</strong></div>
+        <div class="controls">
+          <input class="control" id="month" type="month">
+          <button class="btn" id="edit">E 编辑模式</button>
+          <button class="btn primary" id="save">保存</button>
+          <button class="btn" id="studentView">学生只读</button>
+          <button class="btn" id="exportPdf">导出 PDF</button>
+          <span class="save-state" id="save-state">已就绪</span>
+        </div>
+      </header>
+
+      <section class="section active" id="dashboard">
+        <div class="page-head">
+          <div><h1 class="editable" data-text="headline">GradCompass 留学申请看板</h1><p class="editable" data-text="subtitle">大二在读 · 计算机专业 · 2027 Fall</p></div>
+          <div class="date-chip editable" data-text="dateChip">2026年6月 · 月度复盘</div>
+        </div>
+
+        <div class="dashboard-widgets" id="dashboardWidgets">
+          <article class="card widget size-large" data-widget="overview">
+            <div class="card-head"><div><div class="eyebrow">Overview</div><div class="card-title">总体进度</div></div><div class="card-actions"><span class="hint">点击数字修改</span></div></div>
+            <div class="card-content ring-wrap">
+              <div class="ring" id="ring"><div><b id="overall"></b><small>综合完成度</small></div></div>
+              <div class="progress-list" id="weights"></div>
+            </div>
+          </article>
+          <article class="card widget size-large" data-widget="scores">
+            <div class="card-head"><div><div class="eyebrow">Scores</div><div class="card-title">GPA / 标化 / 英语能力</div></div><div class="card-actions"><button class="link-btn" data-add="metric">+ 成绩</button><button class="link-btn" data-add="english">+ 单项</button></div></div>
+            <div class="card-content score-language">
+              <div>
+                <div class="score-subhead"><div class="score-subtitle">GPA 与标化成绩</div></div>
+                <div id="metrics" class="grid two"></div>
+              </div>
+              <div>
+                <div class="score-subhead"><div class="score-subtitle">英语能力监控</div></div>
+                <div class="english-grid" id="english"></div>
+              </div>
+            </div>
+          </article>
+          <article class="card widget size-medium" data-widget="timeline"><div class="card-head"><div><div class="eyebrow">Timeline</div><div class="card-title">申请时间轴</div></div><div class="card-actions"><button class="link-btn" data-add="timeline">+ 节点</button></div></div><div class="card-content timeline" id="timeline"></div></article>
+          <article class="card widget size-medium" data-widget="courses"><div class="card-head"><div><div class="eyebrow">Prerequisites</div><div class="card-title">先修课</div></div><div class="card-actions"><button class="link-btn" data-add="course">+ 课程</button></div></div><div class="card-content course-grid" id="courses"></div></article>
+          <article class="card widget size-medium" data-widget="skills"><div class="card-head"><div><div class="eyebrow">Skills</div><div class="card-title">技能图谱</div></div><div class="card-actions"><button class="link-btn" data-add="skill">+ 技能</button></div></div><div class="card-content skill-group" id="skills"></div></article>
+          <article class="card widget size-medium" data-widget="internships"><div class="card-head"><div><div class="eyebrow">Internship</div><div class="card-title">实习申请管道</div></div><div class="card-actions"><button class="link-btn" data-add="internship">+ 项目</button></div></div><div class="card-content item-list" id="internships"></div></article>
+          <article class="card widget size-medium" data-widget="international"><div class="card-head"><div><div class="eyebrow">International</div><div class="card-title">国际化背景</div></div></div><div class="card-content item-list" id="international"></div></article>
+          <article class="card widget size-large" data-widget="jobs"><div class="card-head"><div><div class="eyebrow">Jobs</div><div class="card-title">美国热门岗位</div></div><div class="card-actions"><button class="link-btn" data-add="job">+ 岗位</button></div></div><div class="card-content item-list" id="jobs"></div></article>
+        </div>
+      </section>
+
+      <section class="section" id="programs">
+        <div class="page-head"><div><h1>选校规划</h1></div><button class="btn primary" data-add="program">+ 新增院校</button></div>
+        <article class="card">
+          <div class="table-wrap"><table><thead><tr><th>Logo</th><th>院校 / 项目</th><th>层级</th><th>平均GPA</th><th>学费</th><th>录取率</th><th>进度</th><th>备注</th><th>操作</th></tr></thead><tbody id="programTable"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="section" id="companies">
+        <div class="page-head"><div><h1>就业目标</h1></div><button class="btn primary" data-add="company">+ 新增公司</button></div>
+        <article class="card">
+          <div class="table-wrap"><table><thead><tr><th>公司</th><th>关键岗位</th><th>地点</th><th>H-1B</th><th>招聘趋势</th><th>跟进状态</th><th>下步动作</th><th>操作</th></tr></thead><tbody id="companyTable"></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="section" id="actions">
+        <div class="page-head"><div><h1>行动计划</h1></div><button class="btn primary" data-add="task">N 新建任务</button></div>
+        <article class="card"><div class="task-list" id="tasks"></div><button class="add-line" data-add="task">+ 添加任务</button></article>
+      </section>
+
+      <section class="section" id="settings">
+        <div class="page-head"><div><h1>学生档案</h1></div></div>
+        <div class="profile-grid">
+          <article class="card">
+            <div class="card-head"><div><div class="eyebrow">Basic</div><div class="card-title">基础信息</div></div></div>
+            <div class="profile-fields">
+              <label class="field"><span>姓名</span><input id="profileName"></label>
+              <label class="field"><span>年级</span><input id="grade"></label>
+              <label class="field"><span>当前学校</span><input id="school"></label>
+              <label class="field"><span>专业 / 方向</span><input id="major"></label>
+              <label class="field"><span>申请季</span><input id="season"></label>
+              <label class="field"><span>目标学位</span><input id="degree"></label>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-head"><div><div class="eyebrow">Goal</div><div class="card-title">申请目标与约束</div></div></div>
+            <div class="profile-fields">
+              <label class="field"><span>目标国家 / 地区</span><input id="regions"></label>
+              <label class="field"><span>目标专业方向</span><input id="targetMajor"></label>
+              <label class="field"><span>目标院校层级</span><input id="schoolTier"></label>
+              <label class="field"><span>地区偏好</span><input id="locationPref"></label>
+              <label class="field"><span>预算上限</span><input id="budget"></label>
+              <label class="field"><span>奖学金考虑</span><input id="scholarship"></label>
+              <label class="field"><span>身份 / 签证需求</span><input id="visa"></label>
+              <label class="field"><span>项目偏好</span><input id="programPref"></label>
+            </div>
+          </article>
+
+          <article class="card profile-plan">
+            <div class="card-head"><div><div class="eyebrow">Plan</div><div class="card-title">阶段与备注</div></div></div>
+            <div class="profile-subtitle">阶段信息</div>
+            <div class="profile-fields">
+              <label class="field"><span>当前阶段</span><input id="phase"></label>
+              <label class="field"><span>最近更新时间</span><input id="updatedAt"></label>
+              <label class="field"><span>下个关键截止日</span><input id="nextDeadline"></label>
+              <label class="field"><span>本月重点</span><input id="monthlyFocus"></label>
+            </div>
+            <div class="profile-subsection">
+              <div class="profile-subtitle">备注</div>
+              <div class="profile-fields">
+              <label class="field full"><span>备注</span><textarea id="profileNote" rows="6"></textarea></label>
+              </div>
+            </div>
+            <div class="profile-subsection">
+              <div class="profile-subtitle">风险标签</div>
+              <div class="risk-tags" id="riskTags"></div>
+              <div class="risk-add">
+                <input id="newRisk" placeholder="新增风险标签">
+                <button class="btn" id="addRisk" type="button">添加</button>
+              </div>
+            </div>
+            <button class="btn primary" id="saveProfile" style="margin-top:16px">保存档案</button>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="drawer" id="drawer"><div class="drawer-head"><h2 id="drawerTitle">详情</h2><button class="mini-btn" id="drawerClose">×</button></div><div id="drawerBody" class="item-list"></div></aside>
+  <div class="modal" id="metricModal"><div class="modal-card"><h2 id="metricTitle">修改数值</h2><label class="field">数值<input id="metricValue" type="number" step="0.01"></label><label class="field">备注<input id="metricNote"></label><div class="modal-actions"><button class="btn" id="metricCancel">取消</button><button class="btn primary" id="metricSave">保存</button></div></div></div>
+  <div class="toast" id="toast">已保存</div>
+
+  <script>
+    window.onerror = function(message, source, lineno, colno) {
+      const target = document.getElementById("save-state");
+      if (target) target.textContent = "脚本错误：" + message;
+    };
+    const KEY = "gradcompass-v2-profile";
+    const inlineShare = window.__GRADCOMPASS_SHARE__ || null;
+    const readOnly = !!inlineShare || new URLSearchParams(location.search).get("view")==="student" || location.hash==="#student";
+    document.body.classList.toggle("readonly", readOnly);
+    const monthNow = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,"0")}`;
+    const labels = {dashboard:"申请总览", programs:"选校规划", companies:"就业目标", actions:"行动计划", settings:"学生档案"};
+    let editing = false, currentMetric = null, dragId = null, dragWidget = null;
+    const layoutDefaults = {
+      order: ["overview","scores","timeline","courses","skills","internships","international","jobs"],
+      sizes: {overview:"large",scores:"large",timeline:"medium",courses:"medium",skills:"medium",internships:"medium",international:"medium",jobs:"large"},
+      collapsed: {}
+    };
+    const base = {
+      month: monthNow,
+      profile: {
+        name: "Taylor",
+        grade: "大二在读",
+        school: "当前学校",
+        major: "计算机专业",
+        season: "2027 Fall",
+        degree: "硕士",
+        regions: "美国",
+        targetMajor: "计算机科学 / AI",
+        schoolTier: "Top 30",
+        locationPref: "科技产业城市优先",
+        budget: "¥80万以内",
+        scholarship: "考虑奖学金",
+        visa: "STEM / OPT 友好",
+        programPref: "就业导向项目",
+        phase: "标化与科研补强期",
+        updatedAt: "2026-06",
+        nextDeadline: "2026-10 选校名单",
+        monthlyFocus: "GRE、科研导师、SOP 素材",
+        note: "本月重点是稳定推进标化与科研联系，同时保持课程成绩。",
+        risks: [
+          { label: "标化风险", active: true },
+          { label: "科研不足", active: true },
+          { label: "推荐信风险", active: true },
+          { label: "GPA 风险", active: false },
+          { label: "实习不足", active: false },
+          { label: "文书素材不足", active: false },
+          { label: "预算风险", active: false },
+          { label: "时间线风险", active: false }
+        ]
+      },
+      text: { headline: "GradCompass 留学申请看板", subtitle: "大二在读 · 计算机专业 · 2027 Fall", dateChip: "2026年6月 · 月度复盘" },
+      weights: [{name:"学业",value:78},{name:"标化",value:46},{name:"科研",value:28},{name:"实习",value:32},{name:"材料",value:18}],
+      metrics: [{key:"gpa",label:"GPA",value:3.72,note:"目标 3.8+"},{key:"toefl",label:"托福 iBT",value:98,note:"目标 105+"}],
+      english: [{label:"听力",value:27,target:28},{label:"口语",value:22,target:26},{label:"阅读",value:26,target:28},{label:"写作",value:23,target:26},{label:"词汇量",value:6500,target:10000}],
+      courses: [{id:id(),name:"微积分 II",status:"已完成",progress:100,grade:"A"},{id:id(),name:"线性代数",status:"进行中",progress:85,grade:"A-"},{id:id(),name:"数据结构与算法",status:"进行中",progress:60,grade:"B+"},{id:id(),name:"操作系统",status:"进行中",progress:30,grade:"B"}],
+      timeline: [{id:id(),month:"2025-09",title:"大二上学期开始",desc:"专注核心 CS 课程，保持 GPA",done:true},{id:id(),month:"2025-12",title:"首考托福",desc:"目标分数 105+",done:true},{id:id(),month:"2026-03",title:"GRE 备考启动",desc:"目标 V160+Q170",done:false},{id:id(),month:"2026-08",title:"成为研究助理",desc:"加入教授研究项目",done:false},{id:id(),month:"2026-10",title:"确定选校名单",desc:"选定 8-12 个目标项目",done:false}],
+      skills: [{id:id(),name:"Python",level:7},{id:id(),name:"JavaScript/TypeScript",level:6},{id:id(),name:"Git",level:6},{id:id(),name:"PyTorch",level:3},{id:id(),name:"AWS/云计算",level:2}],
+      internships: [{id:id(),company:"Google",role:"软件工程实习生",status:"已投递"},{id:id(),company:"Microsoft",role:"Azure AI 实习生",status:"目标"},{id:id(),company:"Amazon",role:"SDE 实习生",status:"目标"}],
+      international: [{id:id(),label:"国际竞赛",desc:"ACM-ICPC 区域赛 / Kaggle 竞赛",status:"已完成"},{id:id(),label:"交换项目",desc:"赴美/英大学进行一学期交换",status:"待完成"},{id:id(),label:"国际学术会议",desc:"参加或在学术会议上发表论文",status:"待完成"},{id:id(),label:"英文学术论文",desc:"以共同作者身份发表研究论文",status:"待完成"}],
+      jobs: [{id:id(),title:"软件工程实习",company:"Google",salary:"$8,000/月"},{id:id(),title:"机器学习工程师",company:"Meta",salary:"$180k-$250k"},{id:id(),title:"SDE Intern",company:"Amazon",salary:"$9,500/月"}],
+      programs: [{id:id(),logo:"GT",school:"佐治亚理工学院",program:"M.S. in Computer Science",tier:"匹配",gpa:"3.7+",tuition:"$10,258/年",rate:"20%",progress:50,note:"全美排名第1，学费极低，产业联系紧密"},{id:id(),logo:"CM",school:"卡内基梅隆大学",program:"M.S. in Computer Science",tier:"冲刺",gpa:"3.8+",tuition:"$62,260/年",rate:"15%",progress:30,note:"AI/ML 研究顶尖，中位薪资高"},{id:id(),logo:"UC",school:"加州大学伯克利分校",program:"M.Eng in EECS",tier:"冲刺",gpa:"3.7+",tuition:"$11,834/年",rate:"8-12%",progress:20,note:"硅谷近在咫尺，图灵奖师资"},{id:id(),logo:"US",school:"南加州大学",program:"M.S. in Computer Science",tier:"保底",gpa:"3.0+",tuition:"$66,640/年",rate:"22%",progress:70,note:"就业率95%，娱乐科技强势"}],
+      companies: [{id:id(),name:"Amazon",roles:"SDE, 数据工程师, PM",location:"Seattle",h1b:"4,644",trend:"扩招",status:"进行中",next:"补投 AWS/AI 岗位"},{id:id(),name:"Google",roles:"SWE, ML工程师",location:"Mountain View",h1b:"1,050",trend:"扩招",status:"进行中",next:"跟进校友 referral"},{id:id(),name:"Microsoft",roles:"云架构师, SWE",location:"Redmond",h1b:"1,394",trend:"扩招",status:"目标",next:"补充 Azure 项目"}],
+      tasks: [{id:id(),title:"预约 GRE 模考并确定新考试日期",meta:"标化考试 · 本周",priority:"高优",done:false},{id:id(),title:"向 3 位教授发送 RA 联系邮件",meta:"科研 · 本周五",priority:"高优",done:false},{id:id(),title:"完成 SOP 素材库第一版",meta:"申请材料 · 本周",priority:"普通",done:false}]
+    };
+    let data = load();
+    function id(){return "id-"+Math.random().toString(36).slice(2,8)}
+    function storageGet(){try{return window.localStorage?.getItem(KEY)||null}catch{return window.__gradCompassMemory||null}}
+    function storageSet(value){try{window.localStorage?.setItem(KEY,value)}catch{window.__gradCompassMemory=value}}
+    function encodeShare(value){return btoa(unescape(encodeURIComponent(JSON.stringify(value))))}
+    function decodeShare(value){return JSON.parse(decodeURIComponent(escape(atob(value))))}
+    function sharedSnapshot(){if(inlineShare)return inlineShare; const value=new URLSearchParams(location.search).get("data"); if(!value)return null; try{return decodeShare(value)}catch{return null}}
+    function load(){try{return sharedSnapshot() || JSON.parse(storageGet()) || structuredClone(base)}catch{return structuredClone(base)}}
+    function ensureProfile(){data.profile={...structuredClone(base.profile),...(data.profile||{})}; if(!data.profile.note)data.profile.note=[data.profile.studentNote,data.profile.teacherNote].filter(Boolean).join("\n"); normalizeRisks()}
+    function ensureLayout(){
+      data.layout = data.layout || {};
+      data.layout.order = Array.isArray(data.layout.order) ? data.layout.order.filter(x=>layoutDefaults.order.includes(x)) : [];
+      layoutDefaults.order.forEach(x=>{if(!data.layout.order.includes(x))data.layout.order.push(x)});
+      data.layout.sizes = {...layoutDefaults.sizes, ...(data.layout.sizes || {})};
+      data.layout.collapsed = data.layout.collapsed || {};
+    }
+    function save(show=false){if(readOnly)return; storageSet(JSON.stringify(data)); document.getElementById("save-state").textContent="已保存 "+new Date().toLocaleTimeString("zh-CN",{hour:"2-digit",minute:"2-digit"}); if(show) toast("已保存本地版本")}
+    function toast(t){const el=document.getElementById("toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1600)}
+    function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+    function initials(name){const parts=String(name||"TC").trim().split(/\s+/);return parts.length>1?(parts[0][0]+parts[1][0]).toUpperCase():parts[0].slice(0,2).toUpperCase()}
+    function tag(v){return v==="高优"||v==="冲刺"||v==="阻塞"?"high":v==="普通"||v==="匹配"||v==="目标"?"mid":v==="已完成"||v==="保底"?"done":"normal"}
+    function render(){
+      ensureProfile();
+      ensureLayout();
+      document.getElementById("month").value=data.month||monthNow;
+      document.getElementById("profileAvatar").textContent=initials(data.profile.name);
+      document.getElementById("student-line").textContent=data.profile.name;
+      document.querySelector(".profile small").textContent=`${data.profile.grade} · ${data.profile.major} · ${data.profile.season}`;
+      if(readOnly)document.getElementById("save-state").textContent="学生只读";
+      document.querySelectorAll("[data-text]").forEach(el=>el.textContent=data.text[el.dataset.text]);
+      const overall=Math.round(data.weights.reduce((s,w)=>s+w.value,0)/data.weights.length);
+      document.getElementById("overall").textContent=overall; document.getElementById("ring").style.setProperty("--p",overall);
+      document.getElementById("weights").innerHTML=data.weights.map((w,i)=>`<div class="progress-row"><span class="editable" data-weight="${i}" data-field="name">${esc(w.name)}</span><div class="track"><div class="fill" style="width:${w.value}%"></div></div><b class="editable" data-weight="${i}" data-field="value">${w.value}</b></div>`).join("");
+      document.getElementById("metrics").innerHTML=data.metrics.map((m,i)=>`<div class="metric" data-metric="${m.key}"><button class="delete-dot" data-remove="metrics" data-i="${i}">×</button><span class="editable" data-list="metrics" data-i="${i}" data-field="label">${esc(m.label)}</span><strong class="editable" data-list="metrics" data-i="${i}" data-field="value">${esc(m.value)}</strong><small class="editable" data-list="metrics" data-i="${i}" data-field="note">${esc(m.note)}</small></div>`).join("");
+      document.getElementById("english").innerHTML=data.english.map((e,i)=>`<div class="english"><button class="delete-dot" data-remove="english" data-i="${i}">×</button><span class="editable" data-english="${i}" data-field="label">${esc(e.label)}</span><b class="editable" data-english="${i}" data-field="value">${esc(e.value)}</b><span>/ <span class="editable" data-english="${i}" data-field="target">${esc(e.target)}</span></span><div class="track" style="margin-top:8px"><div class="fill" style="width:${Math.min(100,e.value/e.target*100)}%"></div></div></div>`).join("");
+      document.getElementById("courses").innerHTML=data.courses.map((c,i)=>`<div class="mini-card"><button class="delete-dot" data-remove="courses" data-i="${i}">×</button><strong class="editable" data-list="courses" data-i="${i}" data-field="name">${esc(c.name)}</strong><p><span class="editable" data-list="courses" data-i="${i}" data-field="grade">${esc(c.grade)}</span> · 完成度 <span class="editable" data-list="courses" data-i="${i}" data-field="progress">${esc(c.progress)}</span>%</p><span class="tag ${tag(c.status)}" data-card-status="courses" data-i="${i}">${esc(c.status)}</span><div class="track"><div class="fill" style="width:${c.progress}%"></div></div></div>`).join("");
+      document.getElementById("timeline").innerHTML=data.timeline.map((t,i)=>`<div class="mini-card"><button class="delete-dot" data-remove="timeline" data-i="${i}">×</button><strong><span class="editable" data-list="timeline" data-i="${i}" data-field="month">${esc(t.month)}</span> · <span class="editable" data-list="timeline" data-i="${i}" data-field="title">${esc(t.title)}</span></strong><p class="editable" data-list="timeline" data-i="${i}" data-field="desc">${esc(t.desc)}</p><span class="tag ${t.done?"done":"normal"}" data-card-status="timeline" data-i="${i}">${t.done?"已完成":"待完成"}</span></div>`).join("");
+      document.getElementById("skills").innerHTML=data.skills.map((s,i)=>`<div class="mini-card"><button class="delete-dot" data-remove="skills" data-i="${i}">×</button><strong class="editable" data-list="skills" data-i="${i}" data-field="name">${esc(s.name)}</strong><p>熟练度 <span class="editable" data-list="skills" data-i="${i}" data-field="level">${s.level}</span>/10</p><div class="track"><div class="fill" style="width:${s.level*10}%"></div></div></div>`).join("");
+      document.getElementById("internships").innerHTML=data.internships.map((it,i)=>mini(it.company,it.role,it.status,"internships",i)).join("");
+      document.getElementById("international").innerHTML=data.international.map((it,i)=>mini(it.label,it.desc,it.status || (it.done?"已完成":"待完成"),"international",i)).join("");
+      document.getElementById("jobs").innerHTML=data.jobs.map((j,i)=>mini(j.title,`${j.company} · ${j.salary}`,"热门","jobs",i)).join("");
+      renderPrograms(); renderCompanies(); renderTasks(); renderProfile(); bind(); setupWidgets(); applyAccessMode();
+    }
+    function setupWidgets(){
+      ensureLayout();
+      const box=document.getElementById("dashboardWidgets");
+      if(!box)return;
+      const cards=Object.fromEntries([...box.querySelectorAll("[data-widget]")].map(card=>[card.dataset.widget,card]));
+      data.layout.order.forEach(key=>{if(cards[key])box.appendChild(cards[key])});
+      [...box.querySelectorAll("[data-widget]")].forEach(card=>{
+        const key=card.dataset.widget;
+        card.classList.remove("size-small","size-medium","size-large");
+        card.classList.add(`size-${data.layout.sizes[key]||"medium"}`);
+        card.classList.toggle("collapsed",!!data.layout.collapsed[key]);
+        card.draggable=!readOnly;
+        const head=card.querySelector(".card-head");
+        let actions=head.querySelector(".card-actions");
+        if(!actions){actions=document.createElement("div");actions.className="card-actions";head.appendChild(actions)}
+        let tools=actions.querySelector(".widget-tools");
+        if(!tools){
+          tools=document.createElement("span");
+          tools.className="widget-tools";
+          tools.innerHTML='<button class="icon-btn widget-size" title="调整宽度" type="button">↔</button><button class="icon-btn widget-collapse" title="收起展开" type="button">▣</button><span class="icon-btn widget-grip" title="拖动排序">⋮</span>';
+          actions.appendChild(tools);
+        }
+        if(readOnly){
+          card.ondragstart=card.ondragend=card.ondragover=card.ondrop=null;
+          return;
+        }
+        tools.querySelector(".widget-size").onclick=e=>{
+          e.stopPropagation();
+          data.layout.sizes[key]=next(["small","medium","large"],data.layout.sizes[key]||"medium");
+          save(); setupWidgets();
+        };
+        tools.querySelector(".widget-collapse").onclick=e=>{
+          e.stopPropagation();
+          data.layout.collapsed[key]=!data.layout.collapsed[key];
+          save(); setupWidgets();
+        };
+        card.ondragstart=e=>{
+          if(e.target.closest("button,input,select,textarea,[contenteditable=true]")){e.preventDefault();return}
+          dragWidget=key; card.classList.add("dragging"); e.dataTransfer.effectAllowed="move";
+        };
+        card.ondragend=()=>card.classList.remove("dragging");
+        card.ondragover=e=>e.preventDefault();
+        card.ondrop=e=>{
+          e.preventDefault();
+          if(!dragWidget || dragWidget===key)return;
+          const dragged=box.querySelector(`[data-widget="${dragWidget}"]`);
+          const nodes=[...box.querySelectorAll("[data-widget]")];
+          if(nodes.indexOf(dragged)<nodes.indexOf(card))card.after(dragged);else card.before(dragged);
+          data.layout.order=[...box.querySelectorAll("[data-widget]")].map(x=>x.dataset.widget);
+          dragWidget=null; save(); setupWidgets();
+        };
+      });
+    }
+    function mini(a,b,c,list,i){return `<div class="mini-card"><button class="delete-dot" data-remove="${list}" data-i="${i}">×</button><strong class="editable" data-list="${list}" data-i="${i}" data-field="${list==="jobs"?"title":list==="internships"?"company":"label"}">${esc(a)}</strong><p class="editable" data-list="${list}" data-i="${i}" data-field="${list==="jobs"?"company":list==="internships"?"role":"desc"}">${esc(b)}</p><span class="tag ${tag(c)}" data-card-status="${list}" data-i="${i}">${esc(c)}</span></div>`}
+    function renderPrograms(){document.getElementById("programTable").innerHTML=data.programs.map((p,i)=>`<tr><td><button class="logo" data-logo="${i}">${esc(p.logo)}</button></td><td><span class="row-title editable" data-list="programs" data-i="${i}" data-field="school">${esc(p.school)}</span><span class="row-sub editable" data-list="programs" data-i="${i}" data-field="program">${esc(p.program)}</span></td><td><span class="tag ${tag(p.tier)}" data-cycle="programs" data-i="${i}" data-field="tier">${esc(p.tier)}</span></td><td class="editable" data-list="programs" data-i="${i}" data-field="gpa">${esc(p.gpa)}</td><td class="editable" data-list="programs" data-i="${i}" data-field="tuition">${esc(p.tuition)}</td><td class="editable" data-list="programs" data-i="${i}" data-field="rate">${esc(p.rate)}</td><td><select class="select" data-progress="${i}">${[0,20,40,60,80,100].map(v=>`<option ${p.progress==v?"selected":""} value="${v}">${v}%</option>`).join("")}</select></td><td class="editable" data-list="programs" data-i="${i}" data-field="note">${esc(p.note)}</td><td><div class="row-actions"><button class="mini-btn" data-delete="programs" data-i="${i}">🗑</button></div></td></tr>`).join("")}
+    function renderCompanies(){document.getElementById("companyTable").innerHTML=data.companies.map((c,i)=>`<tr><td class="row-title editable" data-list="companies" data-i="${i}" data-field="name">${esc(c.name)}</td><td class="editable" data-list="companies" data-i="${i}" data-field="roles">${esc(c.roles)}</td><td class="editable" data-list="companies" data-i="${i}" data-field="location">${esc(c.location)}</td><td class="editable" data-list="companies" data-i="${i}" data-field="h1b">${esc(c.h1b)}</td><td><span class="tag ${tag(c.trend)}">${esc(c.trend)}</span></td><td><span class="tag ${tag(c.status)}" data-cycle="companies" data-i="${i}" data-field="status">${esc(c.status)}</span></td><td class="editable" data-list="companies" data-i="${i}" data-field="next">${esc(c.next)}</td><td><div class="row-actions"><button class="mini-btn" data-delete="companies" data-i="${i}">🗑</button></div></td></tr>`).join("")}
+    function renderTasks(){document.getElementById("tasks").innerHTML=data.tasks.map((t,i)=>`<div class="task ${t.done?"done":""}" draggable="true" data-task="${i}"><input type="checkbox" ${t.done?"checked":""} data-check="${i}"><div><div class="task-title editable" data-list="tasks" data-i="${i}" data-field="title">${esc(t.title)}</div><div class="task-meta editable" data-list="tasks" data-i="${i}" data-field="meta">${esc(t.meta)}</div></div><span class="tag ${tag(t.priority)}" data-cycle="tasks" data-i="${i}" data-field="priority">${esc(t.priority)}</span><span class="drag">⋮⋮</span></div>`).join("")}
+    function bind(){
+      document.querySelectorAll("[data-logo]").forEach(el=>el.onclick=()=>openDrawer(data.programs[el.dataset.logo]));
+      if(readOnly)return;
+      document.querySelectorAll(".metric").forEach(el=>el.onclick=()=>openMetric(el.dataset.metric));
+      document.querySelectorAll("[data-status]").forEach(el=>el.onclick=()=>{const arr=data[el.dataset.status][el.dataset.i]; arr.status=next(["计划中","进行中","已完成"],arr.status); save(); render()});
+      document.querySelectorAll("[data-toggle]").forEach(el=>el.onclick=()=>{data[el.dataset.toggle][el.dataset.i].done=!data[el.dataset.toggle][el.dataset.i].done; save(); render()});
+      document.querySelectorAll("[data-cycle]").forEach(el=>el.onclick=()=>{const item=data[el.dataset.cycle][el.dataset.i], f=el.dataset.field; item[f]=next(f==="tier"?["冲刺","匹配","保底"]:f==="priority"?["高优","普通","低优"]:["目标","进行中","已完成","阻塞"],item[f]); save(); render()});
+      document.querySelectorAll("[data-progress]").forEach(el=>el.onchange=()=>{data.programs[el.dataset.progress].progress=Number(el.value); save(); render()});
+      document.querySelectorAll("[data-check]").forEach(el=>el.onchange=()=>{data.tasks[el.dataset.check].done=el.checked; save(); render()});
+      document.querySelectorAll("[data-delete]").forEach(el=>el.onclick=()=>{data[el.dataset.delete].splice(el.dataset.i,1); save(); render()});
+      document.querySelectorAll("[data-remove]").forEach(el=>el.onclick=e=>{e.stopPropagation(); data[el.dataset.remove].splice(el.dataset.i,1); save(); render()});
+      document.querySelectorAll("[data-card-status]").forEach(el=>el.onclick=()=>{const list=el.dataset.cardStatus; const item=data[list][el.dataset.i]; if(list==="timeline"){item.done=!item.done}else{item.status=next(list==="international"?["待完成","进行中","已完成","阻塞"]:list==="courses"?["计划中","进行中","已完成","阻塞"]:["目标","已投递","面试","已完成","阻塞"],item.status || (item.done?"已完成":"待完成")); delete item.done} save(); render()});
+      document.querySelectorAll(".editable").forEach(el=>{el.ondblclick=()=>{if(!editing)return;el.contentEditable=true;el.focus()};el.onblur=()=>commit(el);el.onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();el.blur()}}});
+      document.querySelectorAll(".task").forEach(el=>{el.ondragstart=()=>{dragId=Number(el.dataset.task);el.classList.add("dragging")};el.ondragend=()=>el.classList.remove("dragging");el.ondragover=e=>e.preventDefault();el.ondrop=e=>{e.preventDefault();const to=Number(el.dataset.task);const [m]=data.tasks.splice(dragId,1);data.tasks.splice(to,0,m);save();render()}});
+    }
+    function commit(el){if(!el.isContentEditable)return; const val=el.textContent.trim(); el.contentEditable=false; if(el.dataset.text)data.text[el.dataset.text]=val; if(el.dataset.weight)data.weights[el.dataset.weight][el.dataset.field]=el.dataset.field==="value"?Number(val):val; if(el.dataset.english)data.english[el.dataset.english][el.dataset.field]=["value","target"].includes(el.dataset.field)?Number(val):val; if(el.dataset.list){const item=data[el.dataset.list][el.dataset.i], f=el.dataset.field; item[f]=["level","value","progress"].includes(f)?Number(val.replace("/10","").replace("%","")):val} save(); render()}
+    function next(a,v){return a[(a.indexOf(v)+1)%a.length]||a[0]}
+    function openMetric(key){currentMetric=key; const m=data.metrics.find(x=>x.key===key); document.getElementById("metricTitle").textContent="修改："+m.label; document.getElementById("metricValue").value=m.value; document.getElementById("metricNote").value=m.note; document.getElementById("metricModal").classList.add("open")}
+    function openDrawer(p){document.getElementById("drawerTitle").textContent=p.school; document.getElementById("drawerBody").innerHTML=`<div class="mini-card"><strong>${esc(p.program)}</strong><p>${esc(p.note)}</p><span class="tag ${tag(p.tier)}">${esc(p.tier)}</span></div>`; document.getElementById("drawer").classList.add("open")}
+    function add(type){if(readOnly)return; const push=(arr,o)=>{arr.push(o);save();render()}; if(type==="metric")push(data.metrics,{key:id(),label:"新成绩",value:0,note:"目标"}); if(type==="english")push(data.english,{label:"新单项",value:0,target:100}); if(type==="task")push(data.tasks,{id:id(),title:"新任务草稿",meta:"分类 · 截止日期",priority:"普通",done:false}); if(type==="course")push(data.courses,{id:id(),name:"新课程",status:"计划中",progress:0,grade:"-"}); if(type==="timeline")push(data.timeline,{id:id(),month:"2026-06",title:"新节点",desc:"备注",done:false}); if(type==="skill")push(data.skills,{id:id(),name:"新技能",level:1}); if(type==="internship")push(data.internships,{id:id(),company:"新公司",role:"岗位",status:"目标"}); if(type==="program")push(data.programs,{id:id(),logo:"N",school:"新院校",program:"新项目",tier:"匹配",gpa:"-",tuition:"-",rate:"-",progress:0,note:"备注"}); if(type==="company")push(data.companies,{id:id(),name:"新公司",roles:"岗位",location:"城市",h1b:"-",trend:"目标",status:"目标",next:"下一步"}); if(type==="job")push(data.jobs,{id:id(),title:"新岗位",company:"公司",salary:"薪资"})}
+    function renderProfile(){
+      ensureProfile();
+      ["profileName","grade","school","major","season","degree","regions","targetMajor","schoolTier","locationPref","budget","scholarship","visa","programPref","phase","updatedAt","nextDeadline","monthlyFocus","profileNote"].forEach(id=>{
+        const key=id==="profileName"?"name":id;
+        const finalKey=id==="profileNote"?"note":key;
+        const el=document.getElementById(id);
+        if(el)el.value=data.profile[finalKey]||"";
+      });
+      normalizeRisks();
+      document.getElementById("riskTags").innerHTML=data.profile.risks.map((r,i)=>`<button class="risk-tag ${r.active?"active":""}" data-risk="${i}">${esc(r.label)}<span class="tag-x" data-risk-delete="${i}">×</span></button>`).join("");
+      if(readOnly)return;
+      document.querySelectorAll("[data-risk]").forEach(btn=>btn.onclick=e=>{if(e.target.dataset.riskDelete!==undefined)return; const r=data.profile.risks[btn.dataset.risk]; r.active=!r.active; save(); renderProfile()});
+      document.querySelectorAll("[data-risk-delete]").forEach(btn=>btn.onclick=e=>{e.stopPropagation(); data.profile.risks.splice(btn.dataset.riskDelete,1); save(); renderProfile()});
+    }
+    function applyAccessMode(){
+      if(!readOnly)return;
+      document.querySelectorAll("input, textarea, select").forEach(el=>el.disabled=true);
+      document.querySelectorAll("[contenteditable=true]").forEach(el=>el.contentEditable=false);
+    }
+    document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===b.dataset.section));document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById("crumb").textContent=labels[b.dataset.section]});
+    document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>add(b.dataset.add));
+    document.getElementById("edit").onclick=()=>{if(readOnly)return; editing=!editing;document.body.classList.toggle("editing",editing);document.getElementById("edit").classList.toggle("active",editing);document.getElementById("edit").textContent=editing?"退出编辑":"E 编辑模式"; if(!editing)document.querySelectorAll("[contenteditable=true]").forEach(el=>el.contentEditable=false)};
+    document.getElementById("save").onclick=()=>save(true); document.getElementById("month").onchange=()=>{if(readOnly)return; data.month=document.getElementById("month").value;save();render()}; document.getElementById("drawerClose").onclick=()=>document.getElementById("drawer").classList.remove("open"); document.getElementById("metricCancel").onclick=()=>document.getElementById("metricModal").classList.remove("open");
+    document.getElementById("metricSave").onclick=()=>{if(readOnly)return; const m=data.metrics.find(x=>x.key===currentMetric);m.value=Number(document.getElementById("metricValue").value);m.note=document.getElementById("metricNote").value;document.getElementById("metricModal").classList.remove("open");save(true);render()};
+    function normalizeRisks(){if(!Array.isArray(data.profile.risks))data.profile.risks=[]; data.profile.risks=data.profile.risks.map(r=>typeof r==="string"?{label:r,active:true}:r).filter(r=>r&&r.label)}
+    document.getElementById("saveProfile").onclick=()=>{if(readOnly)return; ["profileName","grade","school","major","season","degree","regions","targetMajor","schoolTier","locationPref","budget","scholarship","visa","programPref","phase","updatedAt","nextDeadline","monthlyFocus","profileNote"].forEach(id=>{const key=id==="profileName"?"name":id==="profileNote"?"note":id;data.profile[key]=document.getElementById(id).value});save(true);render()};
+    document.getElementById("addRisk").onclick=()=>{if(readOnly)return; const input=document.getElementById("newRisk");const value=input.value.trim();if(!value)return;normalizeRisks();data.profile.risks.push({label:value,active:true});input.value="";save();renderProfile()};
+    document.getElementById("newRisk").onkeydown=e=>{if(!readOnly&&e.key==="Enter")document.getElementById("addRisk").click()};
+    document.getElementById("exportPdf").onclick=()=>window.print();
+    async function copyShareLink(url){
+      try{await navigator.clipboard.writeText(url);toast("学生只读链接已复制")}catch{window.prompt("学生只读链接",url)}
+    }
+    document.getElementById("studentView").onclick=async()=>{
+      try{
+        const res=await fetch("/api/share",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+        if(!res.ok)throw new Error("share failed");
+        const out=await res.json();
+        await copyShareLink(new URL(out.url, location.origin).href);
+      }catch{
+        toast("分享链接创建失败");
+      }
+    };
+    document.getElementById("profileCard").onclick=()=>document.querySelector('.nav button[data-section="settings"]').click();
+    document.addEventListener("keydown",e=>{if(readOnly||e.target.matches("input,[contenteditable=true]"))return;if(e.key.toLowerCase()==="e")edit.click();if(e.key.toLowerCase()==="n"){const sec=document.querySelector(".section.active").id;add(sec==="programs"?"program":sec==="companies"?"company":"task")}});
+    ensureProfile(); if(!readOnly)save(); render();
+  </script>
+</body>
+</html>

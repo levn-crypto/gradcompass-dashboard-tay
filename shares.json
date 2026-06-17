@@ -1,0 +1,920 @@
+{
+  "nncgSo": {
+    "profile": {
+      "name": "Share Test",
+      "grade": "只读测试",
+      "major": "CS",
+      "season": "2027 Fall"
+    },
+    "text": {
+      "headline": "GradCompass 留学申请看板",
+      "subtitle": "只读短链接测试",
+      "dateChip": "2026年6月"
+    },
+    "weights": [
+      {
+        "name": "学业",
+        "value": 80
+      }
+    ],
+    "metrics": [],
+    "english": [],
+    "courses": [],
+    "timeline": [],
+    "skills": [],
+    "internships": [],
+    "international": [],
+    "jobs": [],
+    "programs": [],
+    "companies": [],
+    "tasks": []
+  },
+  "RyMnsQ": {
+    "profile": {
+      "name": "Public API",
+      "grade": "只读测试",
+      "major": "CS",
+      "season": "2027 Fall"
+    },
+    "text": {
+      "headline": "GradCompass 留学申请看板",
+      "subtitle": "公网短链接测试",
+      "dateChip": "2026年6月"
+    },
+    "weights": [
+      {
+        "name": "学业",
+        "value": 80
+      }
+    ],
+    "metrics": [],
+    "english": [],
+    "courses": [],
+    "timeline": [],
+    "skills": [],
+    "internships": [],
+    "international": [],
+    "jobs": [],
+    "programs": [],
+    "companies": [],
+    "tasks": []
+  },
+  "8XGGzFY": {
+    "profile": {
+      "name": "Taylor",
+      "grade": "大二在读",
+      "major": "计算机专业",
+      "season": "2027 Fall"
+    },
+    "text": {
+      "headline": "GradCompass 留学申请看板",
+      "subtitle": "学生只读链接测试",
+      "dateChip": "2026年6月"
+    },
+    "weights": [
+      {
+        "name": "学业",
+        "value": 78
+      }
+    ],
+    "metrics": [],
+    "english": [],
+    "courses": [],
+    "timeline": [],
+    "skills": [],
+    "internships": [],
+    "international": [],
+    "jobs": [],
+    "programs": [],
+    "companies": [],
+    "tasks": []
+  },
+  "vjDMB4E": {
+    "month": "2026-06",
+    "profile": {
+      "name": "Taylor",
+      "grade": "大二在读",
+      "school": "当前学校",
+      "major": "计算机专业",
+      "season": "2027 Fall",
+      "degree": "硕士",
+      "regions": "美国",
+      "targetMajor": "计算机科学 / AI",
+      "schoolTier": "Top 30",
+      "locationPref": "科技产业城市优先",
+      "budget": "¥80万以内",
+      "scholarship": "考虑奖学金",
+      "visa": "STEM / OPT 友好",
+      "programPref": "就业导向项目",
+      "phase": "标化与科研补强期",
+      "updatedAt": "2026-06",
+      "nextDeadline": "2026-10 选校名单",
+      "monthlyFocus": "GRE、科研导师、SOP 素材",
+      "note": "本月重点是稳定推进标化与科研联系，同时保持课程成绩。",
+      "risks": [
+        {
+          "label": "标化风险",
+          "active": true
+        },
+        {
+          "label": "科研不足",
+          "active": true
+        },
+        {
+          "label": "推荐信风险",
+          "active": true
+        },
+        {
+          "label": "GPA 风险",
+          "active": false
+        },
+        {
+          "label": "实习不足",
+          "active": false
+        },
+        {
+          "label": "文书素材不足",
+          "active": false
+        },
+        {
+          "label": "预算风险",
+          "active": false
+        },
+        {
+          "label": "时间线风险",
+          "active": false
+        }
+      ]
+    },
+    "text": {
+      "headline": "GradCompass 留学申请看板",
+      "subtitle": "大二在读 · 计算机专业 · 2027 Fall",
+      "dateChip": "2026年6月 · 月度复盘"
+    },
+    "weights": [
+      {
+        "name": "学业",
+        "value": 78
+      },
+      {
+        "name": "标化",
+        "value": 46
+      },
+      {
+        "name": "科研",
+        "value": 28
+      },
+      {
+        "name": "实习",
+        "value": 32
+      },
+      {
+        "name": "材料",
+        "value": 18
+      }
+    ],
+    "metrics": [
+      {
+        "key": "gpa",
+        "label": "GPA",
+        "value": 3.72,
+        "note": "目标 3.8+"
+      },
+      {
+        "key": "toefl",
+        "label": "托福 iBT",
+        "value": 98,
+        "note": "目标 105+"
+      }
+    ],
+    "english": [
+      {
+        "label": "听力",
+        "value": 27,
+        "target": 28
+      },
+      {
+        "label": "口语",
+        "value": 22,
+        "target": 26
+      },
+      {
+        "label": "阅读",
+        "value": 26,
+        "target": 28
+      },
+      {
+        "label": "写作",
+        "value": 23,
+        "target": 26
+      },
+      {
+        "label": "词汇量",
+        "value": 6500,
+        "target": 10000
+      }
+    ],
+    "courses": [
+      {
+        "id": "id-elhzqn",
+        "name": "微积分 II",
+        "status": "已完成",
+        "progress": 100,
+        "grade": "A"
+      },
+      {
+        "id": "id-d0qb3r",
+        "name": "线性代数",
+        "status": "进行中",
+        "progress": 85,
+        "grade": "A-"
+      },
+      {
+        "id": "id-vah47d",
+        "name": "数据结构与算法",
+        "status": "进行中",
+        "progress": 60,
+        "grade": "B+"
+      },
+      {
+        "id": "id-loqr92",
+        "name": "操作系统",
+        "status": "进行中",
+        "progress": 30,
+        "grade": "B"
+      }
+    ],
+    "timeline": [
+      {
+        "id": "id-iypek8",
+        "month": "2025-09",
+        "title": "大二上学期开始",
+        "desc": "专注核心 CS 课程，保持 GPA",
+        "done": true
+      },
+      {
+        "id": "id-7mlmwc",
+        "month": "2025-12",
+        "title": "首考托福",
+        "desc": "目标分数 105+",
+        "done": true
+      },
+      {
+        "id": "id-jiaivr",
+        "month": "2026-03",
+        "title": "GRE 备考启动",
+        "desc": "目标 V160+Q170",
+        "done": false
+      },
+      {
+        "id": "id-w3nu6c",
+        "month": "2026-08",
+        "title": "成为研究助理",
+        "desc": "加入教授研究项目",
+        "done": false
+      },
+      {
+        "id": "id-3rfnbi",
+        "month": "2026-10",
+        "title": "确定选校名单",
+        "desc": "选定 8-12 个目标项目",
+        "done": false
+      }
+    ],
+    "skills": [
+      {
+        "id": "id-e20v7j",
+        "name": "Python",
+        "level": 7
+      },
+      {
+        "id": "id-o9iqmm",
+        "name": "JavaScript/TypeScript",
+        "level": 6
+      },
+      {
+        "id": "id-hio85v",
+        "name": "Git",
+        "level": 6
+      },
+      {
+        "id": "id-0j1l02",
+        "name": "PyTorch",
+        "level": 3
+      },
+      {
+        "id": "id-4cckf5",
+        "name": "AWS/云计算",
+        "level": 2
+      }
+    ],
+    "internships": [
+      {
+        "id": "id-fqwas9",
+        "company": "Google",
+        "role": "软件工程实习生",
+        "status": "已投递"
+      },
+      {
+        "id": "id-ienrv5",
+        "company": "Microsoft",
+        "role": "Azure AI 实习生",
+        "status": "目标"
+      },
+      {
+        "id": "id-vdboem",
+        "company": "Amazon",
+        "role": "SDE 实习生",
+        "status": "目标"
+      }
+    ],
+    "international": [
+      {
+        "id": "id-db4d5b",
+        "label": "国际竞赛",
+        "desc": "ACM-ICPC 区域赛 / Kaggle 竞赛",
+        "status": "已完成"
+      },
+      {
+        "id": "id-8vq2ee",
+        "label": "交换项目",
+        "desc": "赴美/英大学进行一学期交换",
+        "status": "待完成"
+      },
+      {
+        "id": "id-8b5nx0",
+        "label": "国际学术会议",
+        "desc": "参加或在学术会议上发表论文",
+        "status": "待完成"
+      },
+      {
+        "id": "id-ie8hm0",
+        "label": "英文学术论文",
+        "desc": "以共同作者身份发表研究论文",
+        "status": "待完成"
+      }
+    ],
+    "jobs": [
+      {
+        "id": "id-x52500",
+        "title": "软件工程实习",
+        "company": "Google",
+        "salary": "$8,000/月"
+      },
+      {
+        "id": "id-7tguoo",
+        "title": "机器学习工程师",
+        "company": "Meta",
+        "salary": "$180k-$250k"
+      },
+      {
+        "id": "id-ysv6wa",
+        "title": "SDE Intern",
+        "company": "Amazon",
+        "salary": "$9,500/月"
+      }
+    ],
+    "programs": [
+      {
+        "id": "id-qkxozn",
+        "logo": "GT",
+        "school": "佐治亚理工学院",
+        "program": "M.S. in Computer Science",
+        "tier": "匹配",
+        "gpa": "3.7+",
+        "tuition": "$10,258/年",
+        "rate": "20%",
+        "progress": 50,
+        "note": "全美排名第1，学费极低，产业联系紧密"
+      },
+      {
+        "id": "id-2vjuf7",
+        "logo": "CM",
+        "school": "卡内基梅隆大学",
+        "program": "M.S. in Computer Science",
+        "tier": "冲刺",
+        "gpa": "3.8+",
+        "tuition": "$62,260/年",
+        "rate": "15%",
+        "progress": 30,
+        "note": "AI/ML 研究顶尖，中位薪资高"
+      },
+      {
+        "id": "id-klm0l8",
+        "logo": "UC",
+        "school": "加州大学伯克利分校",
+        "program": "M.Eng in EECS",
+        "tier": "冲刺",
+        "gpa": "3.7+",
+        "tuition": "$11,834/年",
+        "rate": "8-12%",
+        "progress": 20,
+        "note": "硅谷近在咫尺，图灵奖师资"
+      },
+      {
+        "id": "id-4etq12",
+        "logo": "US",
+        "school": "南加州大学",
+        "program": "M.S. in Computer Science",
+        "tier": "保底",
+        "gpa": "3.0+",
+        "tuition": "$66,640/年",
+        "rate": "22%",
+        "progress": 70,
+        "note": "就业率95%，娱乐科技强势"
+      }
+    ],
+    "companies": [
+      {
+        "id": "id-ttfy4i",
+        "name": "Amazon",
+        "roles": "SDE, 数据工程师, PM",
+        "location": "Seattle",
+        "h1b": "4,644",
+        "trend": "扩招",
+        "status": "进行中",
+        "next": "补投 AWS/AI 岗位"
+      },
+      {
+        "id": "id-wkhut6",
+        "name": "Google",
+        "roles": "SWE, ML工程师",
+        "location": "Mountain View",
+        "h1b": "1,050",
+        "trend": "扩招",
+        "status": "进行中",
+        "next": "跟进校友 referral"
+      },
+      {
+        "id": "id-mofeu2",
+        "name": "Microsoft",
+        "roles": "云架构师, SWE",
+        "location": "Redmond",
+        "h1b": "1,394",
+        "trend": "扩招",
+        "status": "目标",
+        "next": "补充 Azure 项目"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "id-rcc92u",
+        "title": "预约 GRE 模考并确定新考试日期",
+        "meta": "标化考试 · 本周",
+        "priority": "高优",
+        "done": false
+      },
+      {
+        "id": "id-v255v9",
+        "title": "向 3 位教授发送 RA 联系邮件",
+        "meta": "科研 · 本周五",
+        "priority": "高优",
+        "done": false
+      },
+      {
+        "id": "id-vczsog",
+        "title": "完成 SOP 素材库第一版",
+        "meta": "申请材料 · 本周",
+        "priority": "普通",
+        "done": false
+      }
+    ],
+    "layout": {
+      "order": [
+        "overview",
+        "scores",
+        "timeline",
+        "courses",
+        "skills",
+        "internships",
+        "international",
+        "jobs"
+      ],
+      "sizes": {
+        "overview": "large",
+        "scores": "large",
+        "timeline": "medium",
+        "courses": "medium",
+        "skills": "medium",
+        "internships": "medium",
+        "international": "medium",
+        "jobs": "large"
+      },
+      "collapsed": {}
+    }
+  },
+  "g6hCfKo": {
+    "month": "2026-06",
+    "profile": {
+      "name": "Taylor",
+      "grade": "大二在读",
+      "school": "当前学校",
+      "major": "计算机专业",
+      "season": "2027 Fall",
+      "degree": "硕士",
+      "regions": "美国",
+      "targetMajor": "计算机科学 / AI",
+      "schoolTier": "Top 30",
+      "locationPref": "科技产业城市优先",
+      "budget": "¥80万以内",
+      "scholarship": "考虑奖学金",
+      "visa": "STEM / OPT 友好",
+      "programPref": "就业导向项目",
+      "phase": "标化与科研补强期",
+      "updatedAt": "2026-06",
+      "nextDeadline": "2026-10 选校名单",
+      "monthlyFocus": "GRE、科研导师、SOP 素材",
+      "note": "本月重点是稳定推进标化与科研联系，同时保持课程成绩。",
+      "risks": [
+        {
+          "label": "标化风险",
+          "active": true
+        },
+        {
+          "label": "科研不足",
+          "active": true
+        },
+        {
+          "label": "推荐信风险",
+          "active": true
+        },
+        {
+          "label": "GPA 风险",
+          "active": false
+        },
+        {
+          "label": "实习不足",
+          "active": false
+        },
+        {
+          "label": "文书素材不足",
+          "active": false
+        },
+        {
+          "label": "预算风险",
+          "active": false
+        },
+        {
+          "label": "时间线风险",
+          "active": false
+        }
+      ]
+    },
+    "text": {
+      "headline": "GradCompass 留学申请看板",
+      "subtitle": "大二在读 · 计算机专业 · 2027 Fall",
+      "dateChip": "2026年6月 · 月度复盘"
+    },
+    "weights": [
+      {
+        "name": "学业",
+        "value": 78
+      },
+      {
+        "name": "标化",
+        "value": 46
+      },
+      {
+        "name": "科研",
+        "value": 28
+      },
+      {
+        "name": "实习",
+        "value": 32
+      },
+      {
+        "name": "材料",
+        "value": 18
+      }
+    ],
+    "metrics": [
+      {
+        "key": "gpa",
+        "label": "GPA",
+        "value": 3.72,
+        "note": "目标 3.8+"
+      },
+      {
+        "key": "toefl",
+        "label": "托福 iBT",
+        "value": 98,
+        "note": "目标 105+"
+      }
+    ],
+    "english": [
+      {
+        "label": "听力",
+        "value": 27,
+        "target": 28
+      },
+      {
+        "label": "口语",
+        "value": 22,
+        "target": 26
+      },
+      {
+        "label": "阅读",
+        "value": 26,
+        "target": 28
+      },
+      {
+        "label": "写作",
+        "value": 23,
+        "target": 26
+      },
+      {
+        "label": "词汇量",
+        "value": 6500,
+        "target": 10000
+      }
+    ],
+    "courses": [
+      {
+        "id": "id-elhzqn",
+        "name": "微积分 II",
+        "status": "已完成",
+        "progress": 100,
+        "grade": "A"
+      },
+      {
+        "id": "id-d0qb3r",
+        "name": "线性代数",
+        "status": "进行中",
+        "progress": 85,
+        "grade": "A-"
+      },
+      {
+        "id": "id-vah47d",
+        "name": "数据结构与算法",
+        "status": "进行中",
+        "progress": 60,
+        "grade": "B+"
+      },
+      {
+        "id": "id-loqr92",
+        "name": "操作系统",
+        "status": "进行中",
+        "progress": 30,
+        "grade": "B"
+      }
+    ],
+    "timeline": [
+      {
+        "id": "id-iypek8",
+        "month": "2025-09",
+        "title": "大二上学期开始",
+        "desc": "专注核心 CS 课程，保持 GPA",
+        "done": true
+      },
+      {
+        "id": "id-7mlmwc",
+        "month": "2025-12",
+        "title": "首考托福",
+        "desc": "目标分数 105+",
+        "done": true
+      },
+      {
+        "id": "id-jiaivr",
+        "month": "2026-03",
+        "title": "GRE 备考启动",
+        "desc": "目标 V160+Q170",
+        "done": false
+      },
+      {
+        "id": "id-w3nu6c",
+        "month": "2026-08",
+        "title": "成为研究助理",
+        "desc": "加入教授研究项目",
+        "done": false
+      },
+      {
+        "id": "id-3rfnbi",
+        "month": "2026-10",
+        "title": "确定选校名单",
+        "desc": "选定 8-12 个目标项目",
+        "done": false
+      }
+    ],
+    "skills": [
+      {
+        "id": "id-e20v7j",
+        "name": "Python",
+        "level": 7
+      },
+      {
+        "id": "id-o9iqmm",
+        "name": "JavaScript/TypeScript",
+        "level": 6
+      },
+      {
+        "id": "id-hio85v",
+        "name": "Git",
+        "level": 6
+      },
+      {
+        "id": "id-0j1l02",
+        "name": "PyTorch",
+        "level": 3
+      },
+      {
+        "id": "id-4cckf5",
+        "name": "AWS/云计算",
+        "level": 2
+      }
+    ],
+    "internships": [
+      {
+        "id": "id-fqwas9",
+        "company": "Google",
+        "role": "软件工程实习生",
+        "status": "已投递"
+      },
+      {
+        "id": "id-ienrv5",
+        "company": "Microsoft",
+        "role": "Azure AI 实习生",
+        "status": "目标"
+      },
+      {
+        "id": "id-vdboem",
+        "company": "Amazon",
+        "role": "SDE 实习生",
+        "status": "目标"
+      }
+    ],
+    "international": [
+      {
+        "id": "id-db4d5b",
+        "label": "国际竞赛",
+        "desc": "ACM-ICPC 区域赛 / Kaggle 竞赛",
+        "status": "已完成"
+      },
+      {
+        "id": "id-8vq2ee",
+        "label": "交换项目",
+        "desc": "赴美/英大学进行一学期交换",
+        "status": "待完成"
+      },
+      {
+        "id": "id-8b5nx0",
+        "label": "国际学术会议",
+        "desc": "参加或在学术会议上发表论文",
+        "status": "待完成"
+      },
+      {
+        "id": "id-ie8hm0",
+        "label": "英文学术论文",
+        "desc": "以共同作者身份发表研究论文",
+        "status": "待完成"
+      }
+    ],
+    "jobs": [
+      {
+        "id": "id-x52500",
+        "title": "软件工程实习",
+        "company": "Google",
+        "salary": "$8,000/月"
+      },
+      {
+        "id": "id-7tguoo",
+        "title": "机器学习工程师",
+        "company": "Meta",
+        "salary": "$180k-$250k"
+      },
+      {
+        "id": "id-ysv6wa",
+        "title": "SDE Intern",
+        "company": "Amazon",
+        "salary": "$9,500/月"
+      }
+    ],
+    "programs": [
+      {
+        "id": "id-qkxozn",
+        "logo": "GT",
+        "school": "佐治亚理工学院",
+        "program": "M.S. in Computer Science",
+        "tier": "匹配",
+        "gpa": "3.7+",
+        "tuition": "$10,258/年",
+        "rate": "20%",
+        "progress": 50,
+        "note": "全美排名第1，学费极低，产业联系紧密"
+      },
+      {
+        "id": "id-2vjuf7",
+        "logo": "CM",
+        "school": "卡内基梅隆大学",
+        "program": "M.S. in Computer Science",
+        "tier": "冲刺",
+        "gpa": "3.8+",
+        "tuition": "$62,260/年",
+        "rate": "15%",
+        "progress": 30,
+        "note": "AI/ML 研究顶尖，中位薪资高"
+      },
+      {
+        "id": "id-klm0l8",
+        "logo": "UC",
+        "school": "加州大学伯克利分校",
+        "program": "M.Eng in EECS",
+        "tier": "冲刺",
+        "gpa": "3.7+",
+        "tuition": "$11,834/年",
+        "rate": "8-12%",
+        "progress": 20,
+        "note": "硅谷近在咫尺，图灵奖师资"
+      },
+      {
+        "id": "id-4etq12",
+        "logo": "US",
+        "school": "南加州大学",
+        "program": "M.S. in Computer Science",
+        "tier": "保底",
+        "gpa": "3.0+",
+        "tuition": "$66,640/年",
+        "rate": "22%",
+        "progress": 70,
+        "note": "就业率95%，娱乐科技强势"
+      }
+    ],
+    "companies": [
+      {
+        "id": "id-ttfy4i",
+        "name": "Amazon",
+        "roles": "SDE, 数据工程师, PM",
+        "location": "Seattle",
+        "h1b": "4,644",
+        "trend": "扩招",
+        "status": "进行中",
+        "next": "补投 AWS/AI 岗位"
+      },
+      {
+        "id": "id-wkhut6",
+        "name": "Google",
+        "roles": "SWE, ML工程师",
+        "location": "Mountain View",
+        "h1b": "1,050",
+        "trend": "扩招",
+        "status": "进行中",
+        "next": "跟进校友 referral"
+      },
+      {
+        "id": "id-mofeu2",
+        "name": "Microsoft",
+        "roles": "云架构师, SWE",
+        "location": "Redmond",
+        "h1b": "1,394",
+        "trend": "扩招",
+        "status": "目标",
+        "next": "补充 Azure 项目"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "id-rcc92u",
+        "title": "预约 GRE 模考并确定新考试日期",
+        "meta": "标化考试 · 本周",
+        "priority": "高优",
+        "done": false
+      },
+      {
+        "id": "id-v255v9",
+        "title": "向 3 位教授发送 RA 联系邮件",
+        "meta": "科研 · 本周五",
+        "priority": "高优",
+        "done": false
+      },
+      {
+        "id": "id-vczsog",
+        "title": "完成 SOP 素材库第一版",
+        "meta": "申请材料 · 本周",
+        "priority": "普通",
+        "done": false
+      }
+    ],
+    "layout": {
+      "order": [
+        "overview",
+        "scores",
+        "timeline",
+        "courses",
+        "skills",
+        "internships",
+        "international",
+        "jobs"
+      ],
+      "sizes": {
+        "overview": "large",
+        "scores": "large",
+        "timeline": "medium",
+        "courses": "medium",
+        "skills": "medium",
+        "internships": "medium",
+        "international": "medium",
+        "jobs": "large"
+      },
+      "collapsed": {}
+    }
+  }
+}
