@@ -4,9 +4,12 @@ const path = require("path");
 const KEY_PREFIX = "gradcompass:share:";
 
 async function redis(command) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) throw new Error("Missing Upstash Redis environment variables");
+  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token =
+    process.env.KV_REST_API_READ_ONLY_TOKEN ||
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) throw new Error("Missing Redis REST environment variables");
 
   const response = await fetch(url, {
     method: "POST",
@@ -16,8 +19,17 @@ async function redis(command) {
     },
     body: JSON.stringify(command)
   });
-  if (!response.ok) throw new Error(`Redis request failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  let body;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = { error: text };
+  }
+  if (!response.ok || body.error) {
+    throw new Error(`Redis request failed: ${response.status} ${body.error || ""}`.trim());
+  }
+  return body;
 }
 
 module.exports = async function handler(req, res) {
@@ -52,6 +64,6 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.error(error);
     res.statusCode = 500;
-    return res.end("Share storage unavailable");
+    return res.end(`Share storage unavailable: ${error.message}`);
   }
 };

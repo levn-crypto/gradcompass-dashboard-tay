@@ -19,9 +19,9 @@ function randomId() {
 }
 
 async function redis(command) {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) throw new Error("Missing Upstash Redis environment variables");
+  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) throw new Error("Missing Redis REST environment variables");
 
   const response = await fetch(url, {
     method: "POST",
@@ -31,8 +31,17 @@ async function redis(command) {
     },
     body: JSON.stringify(command)
   });
-  if (!response.ok) throw new Error(`Redis request failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  let body;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = { error: text };
+  }
+  if (!response.ok || body.error) {
+    throw new Error(`Redis request failed: ${response.status} ${body.error || ""}`.trim());
+  }
+  return body;
 }
 
 async function readBody(req) {
@@ -72,6 +81,6 @@ module.exports = async function handler(req, res) {
     return json(res, { error: "Could not allocate share id" }, 500);
   } catch (error) {
     console.error(error);
-    return json(res, { error: "Share storage unavailable" }, 500);
+    return json(res, { error: "Share storage unavailable", detail: error.message }, 500);
   }
 };
